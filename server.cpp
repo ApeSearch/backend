@@ -77,9 +77,6 @@ string Server::formResponse()
     stream << "Access-Control-Allow-Origin: *\r\n";
     stream << "Connection: close\r\n";
     stream << "\r\n"; 
-
-    std::ifstream inputFile("index.html");
-
-    stream << inputFile.rdbuf();
+    
     return stream.str();
     } // end formRequest()
