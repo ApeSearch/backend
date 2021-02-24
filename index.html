@@ -1,0 +1,24 @@
+<html>
+    <script>
+        function query() {
+            let query = document.getElementById("search").value
+            fetch(`http://localhost:5001/q=${query}`).then(response => response.text())
+                .then(data => {
+                console.log('Success:', data);
+                })
+        }
+    </script>
+    <head>
+        <title>ApeSearch</title>
+    </head>
+    <body>
+        <h1>ApeSearch</h1>
+        <div>
+            <input id="search">
+        </div>
+        <div>
+            <button onclick="query()">Search</button>
+            <button>I'm feeling lucky</button>
+        </div>
+    </body>
+</html>
