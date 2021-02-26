@@ -17,6 +17,11 @@
 // using std::shared_mutex;
 using std::string;
 
+struct Result {
+    Result(string _url, string _snippet) : url(_url), snippet(_snippet) {}
+    string url, snippet;
+};
+
 /*
  * users: Unordered map to Client. Username serves as as a key to choose which
  *        password to use to decrypt request received as well as to refer to
@@ -32,7 +37,9 @@ private:
     void handle_request(const int msg_sock);
     void receiveRequest(const int msg_sock);
 
-    string formResponse();
+    string serializeResults(std::vector<Result> &documents);
+
+    string formResponse(std::vector<Result> &documents);
     int listen_socket;
     Socket sock; // socket is last
 };

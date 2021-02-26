@@ -22,7 +22,7 @@ $(TEST_SRC): %: %.cpp server
 test: ${TEST_SRC}
 
 run_server: all
-	@${EXECDIR}/run_server 6969
+	@${EXECDIR}/run_server 42069
 
 # Generic rules for compiling a source file to an object file
 %.o: %.cpp
