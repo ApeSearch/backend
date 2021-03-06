@@ -12,14 +12,17 @@
 // #include "requestBody.h"
 #include "socket.h"
 #include <string>
+#include <pthread.h>
 #include <mutex> // For std::unique_lock
 #include <shared_mutex> // For shared_mutex
 // using std::shared_mutex;
 using std::string;
 
 struct Result {
-    Result(string _url, string _snippet) : url(_url), snippet(_snippet) {}
+    Result():url(""), snippet(""), rank(0){}
+    Result(string _url, string _snippet, double _rank) : url(_url), snippet(_snippet), rank(_rank){}
     string url, snippet;
+    double rank;
 };
 
 /*
@@ -38,11 +41,14 @@ private:
     void receiveRequest(const int msg_sock);
 
     string serializeResults(std::vector<Result> &documents);
-
     string formResponse(std::vector<Result> &documents);
+    void retrieveSortedDocuments();
+
     int listen_socket;
+    std::vector<Result> resultDocuments;
     Socket sock; // socket is last
 };
+
 
 
 #endif /* _SERVER_H_ */
