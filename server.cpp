@@ -15,21 +15,21 @@ using json = nlohmann::json;
 pthread_mutex_t resultsLock = PTHREAD_MUTEX_INITIALIZER;
 
 vector<Result> possibleDocuments = {
-            Result("https://google.com", "A short description for google", 0.5),
-            Result("https://amazon.com", "A short description for amazon", 0.9),
-            Result("https://facebook.com", "A short description for facebook", 0.8),
-            Result("https://bing.com", "A short description for bing", 0.1),
-            Result("https://reddit.com", "A short description for reddit", 0.4),
-            Result("https://nytimes.com", "A short description for nytimes", 0.2),
-            Result("https://cnbc.com", "A short description for cnbc", 0.25),
-            Result("https://instagram.com", "A short description for instagram", 0.2)
+            Result("https://google.com", "A short description for google", 0),
+            Result("https://amazon.com", "A short description for amazon", 0),
+            Result("https://facebook.com", "A short description for facebook", 0),
+            Result("https://bing.com", "A short description for bing", 0),
+            Result("https://reddit.com", "A short description for reddit", 0),
+            Result("https://nytimes.com", "A short description for nytimes", 0),
+            Result("https://cnbc.com", "A short description for cnbc", 0),
+            Result("https://instagram.com", "A short description for instagram", 0)
         };
-
 
 /* Server::Server (custom constructor): creates Server object with a
                                         corresponding socket port number
  */
 Server::Server(int port_number) : sock( Socket(port_number) ) {
+    srand(time(NULL));
     run_server();
 }
 
@@ -76,8 +76,9 @@ void Server::receiveRequest(const int msg_sock) {
             std::cout << "Receive failed" << std::endl;
             return;
         }
-    resultDocuments.clear();
-    retrieveSortedDocuments();
+        
+    std::vector<Result> resultDocuments;
+    retrieveSortedDocuments(resultDocuments);
 
     std::cout << buf << std::endl;
 
@@ -103,8 +104,8 @@ string Server::formResponse(std::vector<Result> &documents)
 string Server::serializeResults(std::vector<Result> &documents) {
     json response = json::array();
 
-    for ( int i = 0; i < documents.size(); ++i )
-        response.push_back(json({{"url", documents[i].url}, {"snippet", documents[i].snippet}}));
+    for ( int i = 0; i < 10; ++i )
+        response.push_back(json({{"url", documents[i].url}, {"snippet", documents[i].snippet}, {"rank", documents[i].rank}}));
 
     return response.dump();
 }
@@ -121,29 +122,33 @@ void sortResults(std::vector<Result> &documents){
     }
 }
 
+void rankPage(Result &page) {
+    page.rank = (float) rand() / RAND_MAX;
+}
+
 void* getRandDocument(void* args){
     vector<Result>* documents = (vector<Result>*) args;
 
     pthread_mutex_lock(&resultsLock);
-    documents->push_back(possibleDocuments[rand() % possibleDocuments.size()]);
-    pthread_mutex_unlock(&resultsLock);
+    for (int i = 0; i < 10; ++i) {
+        Result docToPush = possibleDocuments[rand() % possibleDocuments.size()];
 
+        rankPage(docToPush);
+
+        documents->push_back(docToPush);
+    }
+    pthread_mutex_unlock(&resultsLock);
 }
 
 
-void Server::retrieveSortedDocuments(){
-    srand(time(NULL));
-    
+void Server::retrieveSortedDocuments(std::vector<Result> &documents){
     pthread_t rpcPool[5];
 
-    for(int i = 0; i < 5; ++i){
-        pthread_create(&(rpcPool[i]), NULL, &getRandDocument, (void*) &resultDocuments);
-    }
+    for(int i = 0; i < 5; ++i)
+        pthread_create(&(rpcPool[i]), NULL, &getRandDocument, (void*) &documents);
 
-    for(int i = 0; i < 5; ++i){
-        void* returnValue;
+    for(int i = 0; i < 5; ++i)
         pthread_join(rpcPool[i], NULL);
-    }
 
-    sortResults(resultDocuments);
+    sortResults(documents);
 }
