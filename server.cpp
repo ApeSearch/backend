@@ -76,9 +76,8 @@ void Server::receiveRequest(const int msg_sock) {
             std::cout << "Receive failed" << std::endl;
             return;
         }
-        
-    std::vector<Result> resultDocuments;
-    retrieveSortedDocuments(resultDocuments);
+
+    std::vector<Result> resultDocuments = retrieveSortedDocuments();
 
     std::cout << buf << std::endl;
 
@@ -141,7 +140,8 @@ void* getRandDocument(void* args){
 }
 
 
-void Server::retrieveSortedDocuments(std::vector<Result> &documents){
+std::vector<Result> Server::retrieveSortedDocuments(){
+    std::vector<Result> documents;
     pthread_t rpcPool[5];
 
     for(int i = 0; i < 5; ++i)
@@ -151,4 +151,5 @@ void Server::retrieveSortedDocuments(std::vector<Result> &documents){
         pthread_join(rpcPool[i], NULL);
 
     sortResults(documents);
+    return documents;
 }
