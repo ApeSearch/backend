@@ -92,7 +92,7 @@ void Server::receiveRequest(const int msg_sock) {
     send(msg_sock, response.c_str(), response.length(), MSG_NOSIGNAL);
 } // end receiveRequest()
 
-string Server::formResponse(std::vector<Result> &documents) 
+string Server::formResponse(const std::vector<Result> &documents) 
     {
         std::ostringstream stream;
         stream << "HTTP/1.1 200 OK\r\n";
@@ -106,7 +106,7 @@ string Server::formResponse(std::vector<Result> &documents)
         return stream.str();
     } // end formRequest()
 
-string Server::serializeResults(std::vector<Result> &documents) {
+string Server::serializeResults(const std::vector<Result> &documents) {
     json response = json::array();
 
     for ( int i = 0; i < documents.size(); ++i )

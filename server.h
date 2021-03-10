@@ -45,8 +45,8 @@ private:
     void handle_request(const int msg_sock);
     void receiveRequest(const int msg_sock);
 
-    string serializeResults(std::vector<Result> &documents);
-    string formResponse(std::vector<Result> &documents);
+    string serializeResults(const std::vector<Result> &documents);
+    string formResponse(const std::vector<Result> &documents);
     std::vector<Result> retrieveSortedDocuments();
 
     int listen_socket;
