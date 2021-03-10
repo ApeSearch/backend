@@ -8,8 +8,8 @@
 #include <unistd.h>
 #include <string>
 #include <time.h>
+#include "libraries/AS/include/AS/algorithms.h"
 
-;
 
 
 using std::string;
@@ -20,7 +20,7 @@ using json = nlohmann::json;
 
 //pthread_mutex_t resultsLock = PTHREAD_MUTEX_INITIALIZER;
 
-vector<Result> possibleDocuments = {
+std::vector<Result> possibleDocuments = {
             Result("https://google.com", "A short description for google", 0),
             Result("https://amazon.com", "A short description for amazon", 0),
             Result("https://facebook.com", "A short description for facebook", 0),
@@ -117,13 +117,8 @@ string Server::serializeResults(const std::vector<Result> &documents) {
 
 void sortResults(std::vector<Result> &documents){
     for(int i = 1; i < documents.size(); ++i){
-        int index = i;
-
-        for(int index = i; index > 0 && documents[index].rank > documents[index - 1].rank; --index){
-            Result temp = documents[index];
-            documents[index] = documents[index - 1];
-            documents[index - 1] = temp;
-        }
+        for(int index = i; index > 0 && documents[index].rank > documents[index - 1].rank; --index)
+            APESEARCH::swap( documents[index], documents[index - 1]);
     }
 }
 
