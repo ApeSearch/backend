@@ -35,4 +35,4 @@ run_server: all
 	${CC} -Dtesting -c $< -o $@
 
 clean:
-	rm -rf ${OBJS} ${EXECDIR}/* server
+	rm -rf ${OBJS} ${ASOBJS} ${EXECDIR}/* server 
