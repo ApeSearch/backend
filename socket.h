@@ -8,7 +8,6 @@
 
 #include <sys/types.h>
 #include <string>
-#include <vector>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -19,7 +18,6 @@ using std::istringstream;
 #include <mutex>
 
 using std::string;
-using std::vector;
 
 extern std::mutex cout_lock;
 

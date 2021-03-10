@@ -15,6 +15,7 @@
 #include <pthread.h>
 #include <mutex> // For std::unique_lock
 #include <shared_mutex> // For shared_mutex
+#include "libraries/AS/include/AS/pthread_pool.h"
 // using std::shared_mutex;
 using std::string;
 
@@ -24,6 +25,10 @@ struct Result {
     string url, snippet;
     double rank;
 };
+
+#define SERVERNODES 5
+#define MAXCLIENTS 1
+#define DOCSPERNODE 10
 
 /*
  * users: Unordered map to Client. Username serves as as a key to choose which
@@ -46,6 +51,7 @@ private:
 
     int listen_socket;
     Socket sock; // socket is last
+    APESEARCH::PThreadPool<std::deque<APESEARCH::Func>> threadsPool;
 };
 
 

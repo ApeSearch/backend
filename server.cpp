@@ -9,10 +9,16 @@
 #include <string>
 #include <time.h>
 
+;
+
+
 using std::string;
 using json = nlohmann::json;
 
-pthread_mutex_t resultsLock = PTHREAD_MUTEX_INITIALIZER;
+
+
+
+//pthread_mutex_t resultsLock = PTHREAD_MUTEX_INITIALIZER;
 
 vector<Result> possibleDocuments = {
             Result("https://google.com", "A short description for google", 0),
@@ -28,7 +34,7 @@ vector<Result> possibleDocuments = {
 /* Server::Server (custom constructor): creates Server object with a
                                         corresponding socket port number
  */
-Server::Server(int port_number) : sock( Socket(port_number) ) {
+Server::Server(int port_number) : sock( Socket(port_number) ), threadsPool(1) {
     srand(time(NULL));
     run_server();
 }
@@ -38,7 +44,7 @@ Server::Server(int port_number) : sock( Socket(port_number) ) {
  * where standard input cannot be read from. It inputs in the passwords into a filestream
  * And processes in the same manner.
 */
-Server::Server(int port_number, char *file) : sock( Socket(port_number) ) {
+Server::Server(int port_number, char *file) : Server(port_number) {
     std::ifstream inputFile(file);
     if (!inputFile.is_open()) {
         std::cerr << file << " isn't open" << std::endl;
@@ -94,7 +100,7 @@ string Server::formResponse(std::vector<Result> &documents)
         stream << "Access-Control-Allow-Origin: *\r\n";
         stream << "Connection: close\r\n";
         stream << "\r\n";
-
+        
         stream << serializeResults(documents);
 
         return stream.str();
@@ -103,7 +109,7 @@ string Server::formResponse(std::vector<Result> &documents)
 string Server::serializeResults(std::vector<Result> &documents) {
     json response = json::array();
 
-    for ( int i = 0; i < 10; ++i )
+    for ( int i = 0; i < documents.size(); ++i )
         response.push_back(json({{"url", documents[i].url}, {"snippet", documents[i].snippet}, {"rank", documents[i].rank}}));
 
     return response.dump();
@@ -125,31 +131,36 @@ void rankPage(Result &page) {
     page.rank = (float) rand() / RAND_MAX;
 }
 
-void* getRandDocument(void* args){
-    vector<Result>* documents = (vector<Result>*) args;
+std::vector<Result> getRandDocument(){
+    std::vector<Result> documents;
+    documents.reserve(DOCSPERNODE);
 
-    pthread_mutex_lock(&resultsLock);
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < DOCSPERNODE; ++i) {
         Result docToPush = possibleDocuments[rand() % possibleDocuments.size()];
 
         rankPage(docToPush);
 
-        documents->push_back(docToPush);
+        documents.push_back(docToPush);
     }
-    pthread_mutex_unlock(&resultsLock);
+    return documents;
 }
 
 
 std::vector<Result> Server::retrieveSortedDocuments(){
     std::vector<Result> documents;
-    pthread_t rpcPool[5];
+    std::vector< std::future<std::vector<Result>> > futureObjs;
+    documents.reserve( SERVERNODES * DOCSPERNODE );
+    futureObjs.reserve(SERVERNODES);
 
-    for(int i = 0; i < 5; ++i)
-        pthread_create(&(rpcPool[i]), NULL, &getRandDocument, (void*) &documents);
+    for(size_t i = 0; i < SERVERNODES; ++i)
+        futureObjs.emplace_back( threadsPool.submit(getRandDocument) );
+        //pthread_create(&(rpcPool[i]), NULL, &getRandDocument, (void*) &documents);
 
-    for(int i = 0; i < 5; ++i)
-        pthread_join(rpcPool[i], NULL);
-
+    for(size_t i = 0; i < SERVERNODES; ++i)
+       {
+        std::vector<Result> docsOfNode( futureObjs[i].get() );
+        documents.insert( documents.end(), docsOfNode.begin(), docsOfNode.end() );
+       } // end for
     sortResults(documents);
     return documents;
 }

@@ -1,12 +1,16 @@
 CC=g++ -g3 -std=c++17 -Wall -pedantic -Wconversion -Wextra -Wreorder -fno-builtin
 
+ASSRC=libraries/AS/src
+ASSOURCES=$(wildcard ${ASSRC}/*.cpp)
+ASOBJS=${ASSOURCES:.cpp=.o}
+
 SOURCES=$(wildcard *.cpp)
 OBJS=${SOURCES:.cpp=.o}
 
 all: server test
 
-server: ${OBJS}
-	ld -r -o $@ ${OBJS} 
+server: ${OBJS} ${ASOBJS}
+	ld -r -o $@ ${OBJS} ${ASOBJS}
 
 # HtmlParser: ${OBJS}
 # 	ld -r -o $@ ${OBJS}
@@ -17,7 +21,7 @@ EXECDIR=tests/bin
 TEST_SRC:=$(basename $(wildcard ${TESTDIR}/*.cpp))
 $(TEST_SRC): %: %.cpp server
 	@mkdir -p ${EXECDIR}
-	${CC} -o ${EXECDIR}/$(notdir $@) $^ -pthread
+	${CC} -Dtesting -o ${EXECDIR}/$(notdir $@) $^ -pthread
 
 test: ${TEST_SRC}
 
@@ -26,9 +30,9 @@ run_server: all
 
 # Generic rules for compiling a source file to an object file
 %.o: %.cpp
-	${CC} -c $<
+	${CC} -Dtesting -c $< -o $@
 %.o: %.cc
-	${CC} -c $<
+	${CC} -Dtesting -c $< -o $@
 
 clean:
 	rm -f ${OBJS} ${EXECDIR}/* server
