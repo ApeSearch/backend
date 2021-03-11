@@ -109,7 +109,7 @@ string Server::formResponse(const std::vector<Result> &documents)
 string Server::serializeResults(const std::vector<Result> &documents) {
     json response = json::array();
 
-    for ( int i = 0; i < documents.size(); ++i )
+    for ( int i = 0; i < 10; ++i )
         response.push_back(json({{"url", documents[i].url}, {"snippet", documents[i].snippet}, {"rank", documents[i].rank}}));
 
     return response.dump();
