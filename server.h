@@ -16,6 +16,7 @@
 #include <mutex> // For std::unique_lock
 #include <shared_mutex> // For shared_mutex
 #include "libraries/AS/include/AS/pthread_pool.h"
+#include "libraries/AS/include/AS/circular_buffer.h"
 // using std::shared_mutex;
 using std::string;
 
@@ -51,7 +52,9 @@ private:
 
     int listen_socket;
     Socket sock; // socket is last
-    APESEARCH::PThreadPool<std::deque<APESEARCH::Func>> threadsPool;
+    static constexpr size_t maxNumOfSubmits = MAXCLIENTS * DOCSPERNODE;
+    APESEARCH::PThreadPool<APESEARCH::circular_buffer
+    <APESEARCH::Func, APESEARCH::DEFAULT::defaultBuffer<APESEARCH::Func, maxNumOfSubmits> >> threadsPool;
     static constexpr size_t maxTopDocs = 10u;
 };
 

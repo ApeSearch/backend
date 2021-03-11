@@ -32,7 +32,7 @@ std::vector<Result> possibleDocuments = {
 /* Server::Server (custom constructor): creates Server object with a
                                         corresponding socket port number
  */
-Server::Server(int port_number) : sock( Socket(port_number) ), threadsPool( MAXCLIENTS * SERVERNODES ) {
+Server::Server(int port_number) : sock( Socket(port_number) ), threadsPool( MAXCLIENTS * SERVERNODES, maxNumOfSubmits) {
     srand(time(NULL));
     run_server();
 }
