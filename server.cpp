@@ -16,8 +16,6 @@ using std::string;
 using json = nlohmann::json;
 
 
-
-
 //pthread_mutex_t resultsLock = PTHREAD_MUTEX_INITIALIZER;
 
 std::vector<Result> possibleDocuments = {
@@ -108,8 +106,9 @@ string Server::formResponse(const std::vector<Result> &documents)
 
 string Server::serializeResults(const std::vector<Result> &documents) {
     json response = json::array();
-
-    for ( int i = 0; i < 10; ++i )
+    
+    size_t numOfDocs = APESEARCH::min( documents.size(), Server::maxTopDocs );
+    for ( size_t i = 0; i < numOfDocs; ++i )
         response.push_back(json({{"url", documents[i].url}, {"snippet", documents[i].snippet}, {"rank", documents[i].rank}}));
 
     return response.dump();

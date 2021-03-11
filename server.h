@@ -52,6 +52,7 @@ private:
     int listen_socket;
     Socket sock; // socket is last
     APESEARCH::PThreadPool<std::deque<APESEARCH::Func>> threadsPool;
+    static constexpr size_t maxTopDocs = 10u;
 };
 
 
