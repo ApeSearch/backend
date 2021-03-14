@@ -81,9 +81,11 @@ void Server::receiveRequest(const int msg_sock) {
             return;
         }
 
+    auto lineEnd = buf.find("\r\n");
+    auto queryLine = string(&buf.front(), lineEnd);
+    std::cout << queryLine << std::endl;       
+     
     std::vector<Result> resultDocuments = retrieveSortedDocuments();
-
-    std::cout << buf << std::endl;
 
     string response = formResponse(resultDocuments);
 
