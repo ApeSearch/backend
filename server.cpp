@@ -100,8 +100,9 @@ APESEARCH::string Server::formResponse(const std::vector<Result> &documents)
         stream << "\r\n";
         
         stream << serializeResults(documents);
+        auto str( stream.str() );
 
-        return APESEARCH::string( stream.str().begin(), stream.str().end() );
+        return APESEARCH::string( str.begin(), str.end() );
     } // end formRequest()
 
 APESEARCH::string Server::serializeResults(const std::vector<Result> &documents) {
