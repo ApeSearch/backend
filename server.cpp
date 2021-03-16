@@ -125,7 +125,7 @@ void rankPage(Result &page) {
     page.rank = (float) rand() / RAND_MAX;
 }
 
-std::vector<Result> getRandDocument(){
+std::vector<Result> Server::getRandDocument(){
     std::vector<Result> documents;
     documents.reserve(DOCSPERNODE);
 
@@ -147,12 +147,13 @@ std::vector<Result> Server::retrieveSortedDocuments(){
     futureObjs.reserve(SERVERNODES);
 
     for(size_t i = 0; i < SERVERNODES; ++i)
-        futureObjs.emplace_back( threadsPool.submit(getRandDocument) );
+        futureObjs.emplace_back( threadsPool.submit( 
+            [this]() -> std::vector<Result> { return this->getRandDocument(); } ) );
         //pthread_create(&(rpcPool[i]), NULL, &getRandDocument, (void*) &documents);
 
-    for(size_t i = 0; i < SERVERNODES; ++i)
+    for( std::future<std::vector<Result>>& futObj : futureObjs )
        {
-        std::vector<Result> docsOfNode( futureObjs[i].get() );
+        std::vector<Result> docsOfNode( futObj.get() );
         documents.insert( documents.end(), docsOfNode.begin(), docsOfNode.end() );
        } // end for
     sortResults(documents);

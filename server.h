@@ -49,6 +49,7 @@ private:
     string serializeResults(const std::vector<Result> &documents);
     string formResponse(const std::vector<Result> &documents);
     std::vector<Result> retrieveSortedDocuments();
+    std::vector<Result> getRandDocument();
 
     int listen_socket;
     Socket sock; // socket is last
