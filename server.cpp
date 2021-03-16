@@ -6,13 +6,10 @@
 #include <sstream>
 #include <thread>
 #include <unistd.h>
-#include <string>
+#include "../libraries/AS/include/AS/string.h"
 #include <time.h>
 #include "libraries/AS/include/AS/algorithms.h"
 
-
-
-using std::string;
 using json = nlohmann::json;
 
 
@@ -74,7 +71,7 @@ void Server::handle_request(const int msg_sock) {
 } // end handle_error
 
 void Server::receiveRequest(const int msg_sock) {
-    std::string buf(Socket::MAX_SIZE, '\0');
+    APESEARCH::string buf(Socket::MAX_SIZE, '\0');
     if (!sock.receive_request(&buf.front(), msg_sock, Socket::MAX_SIZE, 0))
         {
             std::cout << "Receive failed" << std::endl;
@@ -82,17 +79,18 @@ void Server::receiveRequest(const int msg_sock) {
         }
 
     auto lineEnd = buf.find("\r\n");
-    auto queryLine = string(&buf.front(), lineEnd);
+    auto queryLine = APESEARCH::string(&buf.front(), lineEnd);
     std::cout << queryLine << std::endl;       
      
     std::vector<Result> resultDocuments = retrieveSortedDocuments();
 
-    string response = formResponse(resultDocuments);
+    APESEARCH::string response = formResponse(resultDocuments);
+    std::cout << response << std::endl;
 
-    send(msg_sock, response.c_str(), response.length(), MSG_NOSIGNAL);
+    send(msg_sock, response.begin(), response.size(), MSG_NOSIGNAL);
 } // end receiveRequest()
 
-string Server::formResponse(const std::vector<Result> &documents) 
+APESEARCH::string Server::formResponse(const std::vector<Result> &documents) 
     {
         std::ostringstream stream;
         stream << "HTTP/1.1 200 OK\r\n";
@@ -103,17 +101,18 @@ string Server::formResponse(const std::vector<Result> &documents)
         
         stream << serializeResults(documents);
 
-        return stream.str();
+        return APESEARCH::string( stream.str().begin(), stream.str().end() );
     } // end formRequest()
 
-string Server::serializeResults(const std::vector<Result> &documents) {
+APESEARCH::string Server::serializeResults(const std::vector<Result> &documents) {
     json response = json::array();
     
     size_t numOfDocs = APESEARCH::min( documents.size(), Server::maxTopDocs );
     for ( size_t i = 0; i < numOfDocs; ++i )
         response.push_back(json({{"url", documents[i].url}, {"snippet", documents[i].snippet}, {"rank", documents[i].rank}}));
 
-    return response.dump();
+    auto resp = response.dump();
+    return APESEARCH::string( resp.begin(), resp.end() );
 }
 
 void sortResults(std::vector<Result> &documents){

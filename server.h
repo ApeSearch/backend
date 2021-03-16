@@ -11,14 +11,13 @@
 // #include "Client.h"
 // #include "requestBody.h"
 #include "socket.h"
-#include <string>
+#include "../libraries/AS/include/AS/string.h"
 #include <pthread.h>
-#include <mutex> // For std::unique_lock
+#include "../libraries/AS/include/AS/mutex.h" // For std::unique_lock
 #include <shared_mutex> // For shared_mutex
 #include "libraries/AS/include/AS/pthread_pool.h"
 #include "libraries/AS/include/AS/circular_buffer.h"
 // using std::shared_mutex;
-using std::string;
 
 struct Result {
     Result():url(""), snippet(""), rank(0){}
@@ -46,8 +45,8 @@ private:
     void handle_request(const int msg_sock);
     void receiveRequest(const int msg_sock);
 
-    string serializeResults(const std::vector<Result> &documents);
-    string formResponse(const std::vector<Result> &documents);
+    APESEARCH::string serializeResults(const std::vector<Result> &documents);
+    APESEARCH::string formResponse(const std::vector<Result> &documents);
     std::vector<Result> retrieveSortedDocuments();
     std::vector<Result> getRandDocument();
 

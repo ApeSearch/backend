@@ -10,7 +10,7 @@ OBJS=${SOURCES:.cpp=.o}
 all: server test
 
 server: ${OBJS} ${ASOBJS}
-	ld -r -o $@ ${OBJS} ${ASOBJS}
+	ld -r -o $@ ${OBJS}
 
 # HtmlParser: ${OBJS}
 # 	ld -r -o $@ ${OBJS}
@@ -19,8 +19,8 @@ TESTDIR=tests
 EXECDIR=tests/bin
 
 TEST_SRC:=$(basename $(wildcard ${TESTDIR}/*.cpp))
-$(TEST_SRC): %: %.cpp server
-	@mkdir -p ${EXECDIR}
+$(TEST_SRC): %: %.cpp server ${ASOBJS}
+	@mkdir -p ${EXECDIR} 
 	${CC} -Dtesting -o ${EXECDIR}/$(notdir $@) $^ -pthread
 
 test: ${TEST_SRC}
