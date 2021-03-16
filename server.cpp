@@ -7,6 +7,7 @@
 #include <thread>
 #include <unistd.h>
 #include "../libraries/AS/include/AS/string.h"
+#include <string>
 #include <time.h>
 #include "libraries/AS/include/AS/algorithms.h"
 
@@ -110,7 +111,7 @@ APESEARCH::string Server::serializeResults(const std::vector<Result> &documents)
     
     size_t numOfDocs = APESEARCH::min( documents.size(), Server::maxTopDocs );
     for ( size_t i = 0; i < numOfDocs; ++i )
-        response.push_back(json({{"url", documents[i].url}, {"snippet", documents[i].snippet}, {"rank", documents[i].rank}}));
+        response.push_back(json({{"url", std::string( documents[i].url ) }, {"snippet", documents[i].snippet}, {"rank", documents[i].rank}}));
 
     auto resp = response.dump();
     return APESEARCH::string( resp.begin(), resp.end() );

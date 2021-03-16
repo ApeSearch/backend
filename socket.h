@@ -7,7 +7,7 @@
 #define _SOCKET_H_
 
 #include <sys/types.h>
-#include <string>
+#include "../libraries/AS/include/AS/string.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -17,9 +17,7 @@ using std::istringstream;
 #include <utility>
 #include <mutex>
 
-using std::string;
 
-extern std::mutex cout_lock;
 
 /*
  * Socket Servicer: repesents an object that 
@@ -32,7 +30,7 @@ public:
     int get_connection_socket();
     static void handle_error(bool condition, const char *msg);
     bool receive_request(char * const buffer_ptr, const int msg_sock, const unsigned length_of_req, const unsigned bytes_recvd_so_far);
-    void send_response(const string& password, const int sock, const unsigned session, const unsigned seq, const string& data);
+    void send_response(const APESEARCH::string& password, const int sock, const unsigned session, const unsigned seq, const APESEARCH::string& data);
 
     //! Guys make sure this size is sufficent if the exam asks for a new request/new header format
     static const size_t MAX_SIZE = 8192;

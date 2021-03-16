@@ -12,6 +12,7 @@
 // #include "requestBody.h"
 #include "socket.h"
 #include "../libraries/AS/include/AS/string.h"
+#include <string>
 #include <pthread.h>
 #include "../libraries/AS/include/AS/mutex.h" // For std::unique_lock
 #include <shared_mutex> // For shared_mutex
@@ -21,8 +22,8 @@
 
 struct Result {
     Result():url(""), snippet(""), rank(0){}
-    Result(string _url, string _snippet, double _rank) : url(_url), snippet(_snippet), rank(_rank){}
-    string url, snippet;
+    Result(std::string _url, std::string _snippet, double _rank) : url(_url), snippet(_snippet), rank(_rank){}
+    std::string url, snippet;
     double rank;
 };
 

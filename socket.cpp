@@ -115,24 +115,3 @@ bool Socket::receive_request(char * const buffer_ptr, const int msg_sock, const 
     //     totRecvd += (unsigned)recvd_;
     // } while (recvd_ > 0); // end while
 } // end receive_header()
-
-/* leftover from 482 code, we can modify this to be the main response interface tho
- * REQUIRES: password to be non-sentinel
- * MODIFIES: Nothing
- * EFFECTS: Constructors the response message via the following layout:
- *         RESPONSE: <session> <sequence><NULL><data>
- *         Note: <data> is nothing in all scenerios except READBLOCK.
- *
- *         The function utilizes ostringstream to aid in constructing a string
- *         so that it may be encrypted using fs_encrpt and then send after the
- *          response header.
- *
- * Note To Self: Streams (especially stringstreams) tend to be very slow when
- * converting to a certain format (to and from strings). This is a tradeoff for
- * simplicity as it ensures that the format is (basically) correct.
- *
-*/
-void Socket::send_response(const string& password, const int msg_sock, const unsigned session,
-                                const unsigned seq, const string& data) {
-    
-} //end send_response()
