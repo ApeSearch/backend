@@ -114,13 +114,13 @@ APESEARCH::string Server::serializeResults(const std::vector<Result> &documents)
         response.push_back(json({{"url", std::string( documents[i].url ) }, {"snippet", documents[i].snippet}, {"rank", documents[i].rank}}));
 
     auto resp = response.dump();
-    return APESEARCH::string( resp.begin(), resp.end() );
+    return APESEARCH::string( resp.begin(), resp.end() ); // big brain strats bois
 }
 
 void sortResults(std::vector<Result> &documents){
     for(int i = 1; i < documents.size(); ++i){
         for(int index = i; index > 0 && documents[index].rank > documents[index - 1].rank; --index)
-            APESEARCH::swap( documents[index], documents[index - 1]);
+            APESEARCH::swap( documents[index], documents[index - 1] );
     }
 }
 
