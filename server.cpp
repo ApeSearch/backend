@@ -24,7 +24,19 @@ std::vector<Result> possibleDocuments = {
             Result("https://reddit.com", "A short description for reddit", 0),
             Result("https://nytimes.com", "A short description for nytimes", 0),
             Result("https://cnbc.com", "A short description for cnbc", 0),
-            Result("https://instagram.com", "A short description for instagram", 0)
+            Result("https://instagram.com", "A short description for instagram", 0),
+            Result("https://twitter.com", "A short description for twitter", 0),
+            Result("https://youtube.com", "A short description for youtube", 0),
+            Result("https://genius.com", "A short description for genius", 0),
+            Result("https://fender.com", "A short description for fender", 0),
+            Result("https://pentel.com", "A short description for reddit", 0),
+            Result("https://bose.com", "A short description for nytimes", 0),
+            Result("https://jimmyjohns.com", "A short description for cnbc", 0),
+            Result("https://logitech.com", "A short description for instagram", 0),
+            Result("https://microsoft.com", "A short description for google", 0),
+            Result("https://traderjoes.com", "A short description for amazon", 0),
+            Result("https://audiotechnica.com", "A short description for facebook", 0),
+            Result("https://time.com", "A short description for bing", 0),
         };
 
 /* Server::Server (custom constructor): creates Server object with a
