@@ -27,9 +27,9 @@ using std::find;
  *         htons: host to nework server
  *
 */
-Socket::Socket(int port_number) : listen_socket(create_init_socket(port_number)) {}
+backend::Socket::Socket(int port_number) : listen_socket(create_init_socket(port_number)) {}
 
-int Socket::create_init_socket(int port_number) {
+int backend::Socket::create_init_socket(int port_number) {
     struct sockaddr_in server;
     int return_code;
 
@@ -66,7 +66,7 @@ int Socket::create_init_socket(int port_number) {
 
 
 // Server::handle_error: destroys proccess incase socket functions returns and error
-void Socket::handle_error(bool condition, const char *msg) {
+void backend::Socket::handle_error(bool condition, const char *msg) {
     if (condition) {
         perror(msg);
         exit(1);
@@ -74,7 +74,7 @@ void Socket::handle_error(bool condition, const char *msg) {
 } // end handle_error
 
 bool handle_accept(const int msg_sock);
-int Socket::get_connection_socket() {
+int backend::Socket::get_connection_socket() {
     // Wait for the next request and check that it's valid
     int msg_sock = -1;
     do {
@@ -103,7 +103,7 @@ bool handle_accept(const int msg_sock) {
 /*
  *
 */
-bool Socket::receive_request(char * const buffer_ptr, const int msg_sock, const unsigned length_of_req, const unsigned bytes_recvd_so_far) {
+bool backend::Socket::receive_request(char * const buffer_ptr, const int msg_sock, const unsigned length_of_req, const unsigned bytes_recvd_so_far) {
     // Read request, this is really bad format but it works FOR NOW
     // will want to update to the same format used in our crawler to receive http requests from a client
     int bytes_recvd = recv(msg_sock, buffer_ptr, length_of_req - 1, 0);

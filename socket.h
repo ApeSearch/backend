@@ -22,6 +22,7 @@ using std::istringstream;
 /*
  * Socket Servicer: repesents an object that 
 */
+namespace backend {
 class Socket {
 public:
     Socket(int port_number);
@@ -40,5 +41,5 @@ private:
     // File handler (or descripter) used by the OS
     const int listen_socket; // Holds the descriptor for the socket (which OS will handle)
 };
-
+}
 #endif /* _SERVER_H_ */

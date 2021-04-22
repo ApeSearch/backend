@@ -42,7 +42,7 @@ std::vector<Result> possibleDocuments = {
 /* Server::Server (custom constructor): creates Server object with a
                                         corresponding socket port number
  */
-Server::Server(int port_number) : sock( Socket(port_number) ), threadsPool( MAXCLIENTS * SERVERNODES, maxNumOfSubmits) {
+Server::Server(int port_number) : sock( backend::Socket(port_number) ), threadsPool( MAXCLIENTS * SERVERNODES, maxNumOfSubmits) {
     srand(time(NULL));
     run_server();
 }
@@ -84,8 +84,8 @@ void Server::handle_request(const int msg_sock) {
 } // end handle_error
 
 void Server::receiveRequest(const int msg_sock) {
-    APESEARCH::string buf(Socket::MAX_SIZE, '\0');
-    if (!sock.receive_request(&buf.front(), msg_sock, Socket::MAX_SIZE, 0))
+    APESEARCH::string buf(backend::Socket::MAX_SIZE, '\0');
+    if (!sock.receive_request(&buf.front(), msg_sock, backend::Socket::MAX_SIZE, 0))
         {
             std::cout << "Receive failed" << std::endl;
             return;

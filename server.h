@@ -52,7 +52,7 @@ private:
     std::vector<Result> getRandDocument();
 
     int listen_socket;
-    Socket sock; // socket is last
+    backend::Socket sock; // socket is last
     static constexpr size_t maxNumOfSubmits = MAXCLIENTS * DOCSPERNODE;
     APESEARCH::PThreadPool<APESEARCH::circular_buffer
     <APESEARCH::Func, APESEARCH::DEFAULT::defaultBuffer<APESEARCH::Func, maxNumOfSubmits> >> threadsPool;
