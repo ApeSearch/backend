@@ -6,7 +6,7 @@
 #include <sstream>
 #include <thread>
 #include <unistd.h>
-#include "../libraries/AS/include/AS/string.h"
+#include "libraries/AS/include/AS/string.h"
 #include <string>
 #include <time.h>
 #include "libraries/AS/include/AS/algorithms.h"

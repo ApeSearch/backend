@@ -7,7 +7,7 @@
 #define _SOCKET_H_
 
 #include <sys/types.h>
-#include "../libraries/AS/include/AS/string.h"
+#include "libraries/AS/include/AS/string.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
