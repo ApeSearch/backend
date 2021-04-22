@@ -21,9 +21,9 @@
 // using std::shared_mutex;
 
 struct Result {
-    Result():url(""), snippet(""), rank(0){}
-    Result(std::string _url, std::string _snippet, double _rank) : url(_url), snippet(_snippet), rank(_rank){}
-    std::string url, snippet;
+    Result():url(""), rank(0){}
+    Result(std::string _url, double _rank) : url(_url), rank(_rank){}
+    std::string url;
     double rank;
 };
 

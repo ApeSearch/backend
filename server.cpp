@@ -17,26 +17,26 @@ using json = nlohmann::json;
 //pthread_mutex_t resultsLock = PTHREAD_MUTEX_INITIALIZER;
 
 std::vector<Result> possibleDocuments = {
-            Result("https://google.com", "A short description for google", 0),
-            Result("https://amazon.com", "A short description for amazon", 0),
-            Result("https://facebook.com", "A short description for facebook", 0),
-            Result("https://bing.com", "A short description for bing", 0),
-            Result("https://reddit.com", "A short description for reddit", 0),
-            Result("https://nytimes.com", "A short description for nytimes", 0),
-            Result("https://cnbc.com", "A short description for cnbc", 0),
-            Result("https://instagram.com", "A short description for instagram", 0),
-            Result("https://twitter.com", "A short description for twitter", 0),
-            Result("https://youtube.com", "A short description for youtube", 0),
-            Result("https://genius.com", "A short description for genius", 0),
-            Result("https://fender.com", "A short description for fender", 0),
-            Result("https://pentel.com", "A short description for reddit", 0),
-            Result("https://bose.com", "A short description for nytimes", 0),
-            Result("https://jimmyjohns.com", "A short description for cnbc", 0),
-            Result("https://logitech.com", "A short description for instagram", 0),
-            Result("https://microsoft.com", "A short description for google", 0),
-            Result("https://traderjoes.com", "A short description for amazon", 0),
-            Result("https://audiotechnica.com", "A short description for facebook", 0),
-            Result("https://time.com", "A short description for bing", 0),
+            Result("https://google.com", 0),
+            Result("https://amazon.com", 0),
+            Result("https://facebook.com", 0),
+            Result("https://bing.com", 0),
+            Result("https://reddit.com", 0),
+            Result("https://nytimes.com", 0),
+            Result("https://cnbc.com", 0),
+            Result("https://instagram.com", 0),
+            Result("https://twitter.com", 0),
+            Result("https://youtube.com", 0),
+            Result("https://genius.com", 0),
+            Result("https://fender.com", 0),
+            Result("https://pentel.com", 0),
+            Result("https://bose.com", 0),
+            Result("https://jimmyjohns.com", 0),
+            Result("https://logitech.com", 0),
+            Result("https://microsoft.com", 0),
+            Result("https://traderjoes.com", 0),
+            Result("https://audiotechnica.com", 0),
+            Result("https://time.com", 0),
         };
 
 /* Server::Server (custom constructor): creates Server object with a
@@ -123,7 +123,7 @@ APESEARCH::string Server::serializeResults(const std::vector<Result> &documents)
     
     size_t numOfDocs = APESEARCH::min( documents.size(), Server::maxTopDocs );
     for ( size_t i = 0; i < numOfDocs; ++i )
-        response.push_back(json({{"url", std::string( documents[i].url ) }, {"snippet", documents[i].snippet}, {"rank", documents[i].rank}}));
+        response.push_back(json({{"url", std::string( documents[i].url ) }, {"rank", documents[i].rank}}));
 
     auto resp = response.dump();
     return APESEARCH::string( resp.begin(), resp.end() ); // big brain strats bois
