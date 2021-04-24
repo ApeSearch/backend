@@ -27,7 +27,7 @@ struct Result {
     double rank;
 };
 
-#define SERVERNODES 5
+#define SERVERNODES 12
 #define MAXCLIENTS 1
 #define DOCSPERNODE 10
 
@@ -48,7 +48,7 @@ private:
 
     APESEARCH::string serializeResults(const std::vector<Result> &documents);
     APESEARCH::string formResponse(const std::vector<Result> &documents);
-    std::vector<Result> retrieveSortedDocuments();
+    std::vector<Result> retrieveSortedDocuments( APESEARCH::string &query );
     std::vector<Result> getRandDocument();
 
     int listen_socket;
