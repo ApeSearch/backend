@@ -132,6 +132,25 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
     if( sock < 0 )
         return res;
     
+    //Set timeout
+    struct timeval tv;
+    tv.tv_sec = 75;
+    tv.tv_usec  = 0;
+
+    if(setsockopt( sock, SOL_SOCKET, SO_RCVTIMEO, (const char*) &tv, sizeof tv ) == -1 )
+    {
+        close( sock );
+        return res;
+    }
+    
+
+    if(setsockopt( sock, SOL_SOCKET, SO_SNDTIMEO, (const char*) &tv, sizeof tv ) == -1 )
+    {
+        close( sock );
+        return res;
+    }
+
+
     //Connect
     if( connect( sock, ( struct sockaddr * ) &addr, sizeof( addr ) ) < 0)
     {
