@@ -71,9 +71,9 @@ void Server::receiveRequest(const int msg_sock) {
             return;
         }
 
-    size_t start = 7;
-    size_t end = buf.find("HTTP/1.1");
-    APESEARCH::string queryLine = APESEARCH::string(&buf.front() + start, &buf.front() + end);
+    auto lineEnd = buf.find("\r\n");
+    auto queryLine = APESEARCH::string(&buf.front(), 0, lineEnd);
+
     //std::replace( queryLine.begin(), queryLine.end(), "%20", " "); //TODO
 
     std::vector<Result> resultDocuments = retrieveSortedDocuments(queryLine);
@@ -125,7 +125,11 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
 
     static std::vector<char *> ips = { "35.230.41.55", "34.71.229.2", "34.75.57.124", "35.245.134.242", "35.194.60.3", "35.232.126.246", "199.223.236.235", "35.194.73.46", "35.231.170.57", "34.86.240.51", "34.73.221.32", "34.86.225.197" };
 
+
     std::vector<Result> res;
+
+    if(node == 10)
+        return res;
 
     //Create addr
     struct sockaddr_in addr;
