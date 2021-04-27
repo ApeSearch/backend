@@ -80,7 +80,10 @@ void Server::receiveRequest(const int msg_sock) {
 
     APESEARCH::string response = formResponse(resultDocuments);
 
+    std::cout << "-------START SENDING-------\n";
     send(msg_sock, response.begin(), response.size(), 0);
+    
+    std::cout << "-------FINISHED SENDING-------\n";
 } // end receiveRequest()
 
 APESEARCH::string Server::formResponse(const std::vector<Result> &documents) 
@@ -157,6 +160,7 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
     //Connect
     if( connect( sock, ( struct sockaddr * ) &addr, sizeof( addr ) ) < 0)
     {
+        std::cout << "Could not connect to node: " << node << '\n';
         close( sock );
         return res;
     }
@@ -185,7 +189,7 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
             return res;
         }
 
-        if( buffer[total_recieved - 1] == '\0')
+        if( buffer[total_recieved - 1] == '\t')
             break;
     }
 
@@ -197,16 +201,16 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
 
     while( ptr != end )
     {
-        if(*ptr == ',')
+        if(*ptr == ' ')
         {
             mid = ptr;
             *mid = '\0'; // Turn it into a cstring
         }
-        else if (*ptr == '\n' || *ptr == '\0')
+        else if ( *ptr == '\n' || *ptr == '\t' )
         {
             *ptr = '\0';
             r.url = std::string(start);
-            r.rank = atof(mid + 1);
+            r.rank = (double) atoi(mid + 1);
             res.push_back(r);
             r = Result();
             ++ptr;
@@ -216,6 +220,12 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
         ++ptr;
     }
     close( sock );
+
+    for(int i = 0; i < res.size(); ++i)
+    {
+        std::cout << res[i].url << ' '<< res[i].rank << '\n';
+    }
+    std::cout << "End printing for Node: " << node << '\n';
     return res;
 }
 
@@ -227,15 +237,24 @@ std::vector<Result> Server::retrieveSortedDocuments( APESEARCH::string &query ){
     documents.reserve( SERVERNODES * DOCSPERNODE );
     futureObjs.reserve(SERVERNODES);
 
-    for( size_t i = 0; i < 1; ++i )
+    for( size_t i = 0; i < SERVERNODES; ++i )
         futureObjs.emplace_back( threadsPool.submit( callNode, i, query ) );
         //pthread_create(&(rpcPool[i]), NULL, &getRandDocument, (void*) &documents);
-
+    unsigned n = 0;
     for( std::future<std::vector<Result>>& futObj : futureObjs )
        {
+        std::cout << "Waiting on node " << n << '\n';
         std::vector<Result> docsOfNode( futObj.get() );
+        std::cout << "Got node " << n++ << '\n';
         documents.insert( documents.end(), docsOfNode.begin(), docsOfNode.end() );
+        
        } // end for
     sortResults(documents);
+
+    // for(int i = 0; i < documents.size(); ++i)
+    // {
+    //     std::cout << documents[i].url << ' '<< documents[i].rank << '\n';
+    // }
+    std::cout << "Finished Sorting\n";
     return documents;
 }
