@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <thread>
+#include <algorithm>
 #include <unistd.h>
 #include "libraries/AS/include/AS/string.h"
 #include <string>
@@ -60,6 +61,8 @@ void Server::handle_request(const int msg_sock) {
     close(msg_sock);
 } // end handle_error
 
+
+
 void Server::receiveRequest(const int msg_sock) {
     APESEARCH::string buf(backend::Socket::MAX_SIZE, '\0');
     if (!sock.receive_request(&buf.front(), msg_sock, backend::Socket::MAX_SIZE, 0))
@@ -68,14 +71,15 @@ void Server::receiveRequest(const int msg_sock) {
             return;
         }
 
-    auto lineEnd = buf.find("\r\n");
-    auto queryLine = APESEARCH::string(&buf.front(), lineEnd);
-    std::cout << queryLine << std::endl;       
-     
+    size_t start = 7;
+    size_t end = buf.find("HTTP/1.1");
+    APESEARCH::string queryLine = APESEARCH::string(&buf.front() + start, &buf.front() + end);
+    //std::replace( queryLine.begin(), queryLine.end(), "%20", " "); //TODO
+
     std::vector<Result> resultDocuments = retrieveSortedDocuments(queryLine);
 
     APESEARCH::string response = formResponse(resultDocuments);
-    std::cout << response << std::endl;
+    //std::cout << response << std::endl;
 
     send(msg_sock, response.begin(), response.size(), 0);
 } // end receiveRequest()
@@ -134,7 +138,7 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
     
     //Set timeout
     struct timeval tv;
-    tv.tv_sec = 75;
+    tv.tv_sec = 2500;
     tv.tv_usec  = 0;
 
     if(setsockopt( sock, SOL_SOCKET, SO_RCVTIMEO, (const char*) &tv, sizeof tv ) == -1 )
@@ -159,7 +163,7 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
     }
 
     //Send query to node
-    if( send( sock, query.cstr(), query.size() + 1, 0 ) < 0 )
+    if( send( sock, &query.front(), query.size() + 1, 0 ) < 0 )
     {
         close( sock );
         return res;
@@ -185,7 +189,6 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
         if( buffer[total_recieved - 1] == '\0')
             break;
     }
-
 
     Result r;
     char *ptr = buffer;
@@ -222,7 +225,7 @@ std::vector<Result> Server::retrieveSortedDocuments( APESEARCH::string &query ){
     documents.reserve( SERVERNODES * DOCSPERNODE );
     futureObjs.reserve(SERVERNODES);
 
-    for( size_t i = 0; i < SERVERNODES; ++i )
+    for( size_t i = 0; i < 1; ++i )
         futureObjs.emplace_back( threadsPool.submit( callNode, i, query ) );
         //pthread_create(&(rpcPool[i]), NULL, &getRandDocument, (void*) &documents);
 
