@@ -79,7 +79,6 @@ void Server::receiveRequest(const int msg_sock) {
     std::vector<Result> resultDocuments = retrieveSortedDocuments(queryLine);
 
     APESEARCH::string response = formResponse(resultDocuments);
-    //std::cout << response << std::endl;
 
     send(msg_sock, response.begin(), response.size(), 0);
 } // end receiveRequest()
@@ -138,7 +137,7 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
     
     //Set timeout
     struct timeval tv;
-    tv.tv_sec = 2500;
+    tv.tv_sec = 30;
     tv.tv_usec  = 0;
 
     if(setsockopt( sock, SOL_SOCKET, SO_RCVTIMEO, (const char*) &tv, sizeof tv ) == -1 )
