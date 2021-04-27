@@ -73,6 +73,10 @@ void Server::receiveRequest(const int msg_sock) {
 
     auto lineEnd = buf.find("\r\n");
     auto queryLine = APESEARCH::string(&buf.front(), 0, lineEnd);
+    queryLine.convertToLower();
+
+    std::cout << queryLine << '\n';
+
 
     //std::replace( queryLine.begin(), queryLine.end(), "%20", " "); //TODO
 
@@ -225,11 +229,11 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
     }
     close( sock );
 
-    for(int i = 0; i < res.size(); ++i)
-    {
-        std::cout << res[i].url << ' '<< res[i].rank << '\n';
-    }
-    std::cout << "End printing for Node: " << node << '\n';
+    // for(int i = 0; i < res.size(); ++i)
+    // {
+    //     std::cout << res[i].url << ' '<< res[i].rank << '\n';
+    // }
+    // std::cout << "End printing for Node: " << node << '\n';
     return res;
 }
 
@@ -247,9 +251,12 @@ std::vector<Result> Server::retrieveSortedDocuments( APESEARCH::string &query ){
     unsigned n = 0;
     for( std::future<std::vector<Result>>& futObj : futureObjs )
        {
-        std::cout << "Waiting on node " << n << '\n';
         std::vector<Result> docsOfNode( futObj.get() );
-        std::cout << "Got node " << n++ << '\n';
+        if(docsOfNode.empty())
+        {
+            std::cout << "Node " << n << " found no documents\n";
+        }
+            ++n;
         documents.insert( documents.end(), docsOfNode.begin(), docsOfNode.end() );
         
        } // end for
