@@ -210,6 +210,9 @@ std::vector<Result> callNode(int node, APESEARCH::string &query )
             r.rank = atof(mid + 1);
             res.push_back(r);
             r = Result();
+            ++ptr;
+            start = ptr;
+            continue;
         }
         ++ptr;
     }
